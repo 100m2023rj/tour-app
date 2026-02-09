@@ -278,9 +278,12 @@ invoice_data = {
 
 pdf_bytes = build_invoice_pdf(invoice_data)
 
+safe_name = (recv_name or "customer").strip().replace(" ", "_")
+
 st.download_button(
     "⬇️ Download Invoice PDF",
     data=pdf_bytes,
-    file_name=f"invoice_{invoice_no or 'tourstory'}.pdf",
+    file_name=f"invoice_{safe_name}_{invoice_no}.pdf",
     mime="application/pdf",
 )
+
