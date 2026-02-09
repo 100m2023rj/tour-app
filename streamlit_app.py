@@ -1,3 +1,4 @@
+import re
 import os
 from io import BytesIO
 import streamlit as st
@@ -278,12 +279,21 @@ invoice_data = {
 
 pdf_bytes = build_invoice_pdf(invoice_data)
 
-safe_name = (recv_name or "customer").strip().replace(" ", "_")
+import re
+
+def sanitize_filename(s: str) -> str:
+    s = (s or "").strip()
+    s = re.sub(r"[^A-Za-z0-9_-]+", "_", s)
+    s = s.strip("_")
+    return s[:60] or "file"
+
+safe_name = sanitize_filename(recv_name)
+safe_invoice = sanitize_filename(invoice_no)
 
 st.download_button(
     "⬇️ Download Invoice PDF",
     data=pdf_bytes,
-    file_name=f"invoice_{safe_name}_{invoice_no}.pdf",
+    file_name=f"invoice_{safe_name}_{safe_invoice}.pdf",
     mime="application/pdf",
 )
 
